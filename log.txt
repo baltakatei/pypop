@@ -1,0 +1,28 @@
+20190810T1842Z; baltakatei>
+
+This project is to create a python program to create a
+distance-bounding proof.
+
+Reference 1. A paper outlining minimum required bit operations to
+implement distance-bounding proof ([link][hancke_2005_dbp])
+
+Reference 2. Sending and receiving UDP packets in python ([link][eforbes_20170415_udppython])
+
+Reference 3. Wikipedia article on distance-bounding protocol ([link][wp_2019_dbp])
+
+
+[hancke_2005_dbp]: https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf
+
+[eforbes_20170415_udppython]: https://tutorialedge.net/python/udp-client-server-python/
+
+[wp_2019_dbp]: https://en.wikipedia.org/wiki/Distance-bounding_protocol
+
+:: :: :: ::
+
+2019-08-13T14:28Z; baltakatei>
+
+I created a separate readme.md file to store background information
+describing the Hancke-Kuhn protocol in my own terms. Equations are
+encoded in MathML (viewable in default Firefox).
+
+:: :: :: ::
