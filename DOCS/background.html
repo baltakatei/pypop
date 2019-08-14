@@ -1,0 +1,858 @@
+<p><!DOCTYPE html>
+<meta charset="utf-8"></p>
+
+<h2>Introduction</h2>
+
+<p>This is an explanation of how a distance-bounding protocol can be performed using the sending of bit sequences between Verifier <strong>V</strong> to Prover <strong>P</strong>.</p>
+
+<p><a href="http://danielscully.co.uk/projects/mathml-guide/browsertest.php">MathML</a> browser support is required. <a href="https://www.mozilla.org/en-US/firefox/60.0esr/releasenotes/">Firefox 60.0 esr</a> should render MathML symbols correctly.</p>
+
+<h2>Background</h2>
+
+<h3>Explanation, part 1: setup</h3>
+
+<p>I will attempt to explain my understanding of the <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">Hancke-Khun distance-bounding protocol</a> in my own words for a layman reader. If there are errors or misrepresentations then I am at fault.</p>
+
+<p>Gerhard P. Hancke and Markus G. Kuhn <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">proposed</a> a distance-bounding protocol as a defense against man-in-the-middle attacks for people who use RFID tokens in order to automatically authenticate themselves for a location-based service such as the opening of a door or purchase at a specific point-of-sale device.</p>
+
+<p>An example of a man-in-the-middle attack for such a building access-control could be two attackers maliciously forwarding radio traffic between an RFID token and a building RFID reader without the RFID token owner's knowledge even in the case where the token is located at a great distance from the reader. The idea to strengthen an RFID token against such an attack is to equip the building RFID reader with some means of proving the token is physically located within a specific distance.</p>
+
+<p>The goal of this project is to apply this concept to the ping time between two computers in order to prove how close the computers are from eachother. A distance-bounding protocol proof uses the distance, speed, and time equation solved for distance.</p>
+
+<math display='block'>
+<mtext>distance</mtext>
+<mo>=</mo>
+<mfenced><mtext>speed</mtext></mfenced>
+<mo>⋅</mo>
+<mfenced><mtext>time</mtext></mfenced>
+</math>
+
+<p>The speed is set to the speed of light since one conclusion from the theory of special relativity is that no information signal or material can travel faster than light in a vacuum. The time is set to half the ping time (round trip time divided by <math><mn>2</mn></math>.</p>
+
+<math display='block'>
+<mtext>distance</mtext>
+<mo>=</mo>
+<mfenced><mtext>speed of light</mtext></mfenced>
+<mo>⋅</mo>
+<mfrac>
+ <mfenced><mtext>ping time</mtext></mfenced>
+ <mn>2</mn>
+ </mfrac>
+</math>
+
+<p>In the protocol, a verifier, <strong>V</strong>, and a prover, <strong>P</strong>, create a pair of one-time-use pseudorandom bit sequences, <math><msup><mi>R</mi><mn>0</mn></msup></math> and <math><msup><mi>R</mi><mn>1</mn></msup></math>, each containing <math><mi>n</mi></math> elements. Each element <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math> or <math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> is a bit whose value is either <math><mn>0</mn></math> or <math><mn>1</mn></math>. These sequences can be represented like so:</p>
+
+<math>
+ <msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup>
+ <mo>=</mo>
+ <mfenced>
+  <msubsup><mi>R</mi><mn>1</mn><mn>0</mn></msubsup>
+  <msubsup><mi>R</mi><mn>2</mn><mn>0</mn></msubsup>
+  <msubsup><mi>R</mi><mn>3</mn><mn>0</mn></msubsup>
+  <msubsup><mi>R</mi><mn>4</mn><mn>0</mn></msubsup>
+  <msubsup><mi>R</mi><mn>5</mn><mn>0</mn></msubsup>
+  <mo>⋯</mo>
+  <msubsup><mi>R</mi><mi>n</mi><mn>0</mn></msubsup>
+ </mfenced>
+</math>
+
+<p><mspace linebreak='newline' /></p>
+
+<math>
+ <msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup>
+ <mo>=</mo>
+ <mfenced>
+  <msubsup><mi>R</mi><mn>1</mn><mn>1</mn></msubsup>
+  <msubsup><mi>R</mi><mn>2</mn><mn>1</mn></msubsup>
+  <msubsup><mi>R</mi><mn>3</mn><mn>1</mn></msubsup>
+  <msubsup><mi>R</mi><mn>4</mn><mn>1</mn></msubsup>
+  <msubsup><mi>R</mi><mn>5</mn><mn>1</mn></msubsup>
+  <mo>⋯</mo>
+  <msubsup><mi>R</mi><mi>n</mi><mn>1</mn></msubsup>
+ </mfenced>
+</math>
+
+<p>Regarding these bit sequences, <strong>V</strong> rapidly asks <strong>P</strong> a stream of <math><mi>n</mi></math> questions. A question may take only one of the two forms:</p>
+
+<ol>
+<li><p>What is the <math><mfenced><mi>i</mi></mfenced></math>th bit of <math><msup><mi>R</mi><mn>0</mn></msup></math>, <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math>?</p></li>
+<li><p>What is the <math><mfenced><mi>i</mi></mfenced></math>th bit of <math><msup><mi>R</mi><mn>1</mn></msup></math>, <math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math>?</p></li>
+</ol>
+
+<p>The stream of questions start with <math><mi>i</mi><mo>=</mo><mn>1</mn></math> and end with <math><mi>i</mi><mo>=</mo><mi>n</mi></math>.</p>
+
+<p>In order to decide which question <strong>V</strong> asks <strong>P</strong>, <strong>V</strong> generates a private random bit sequence, <math><mi>C</mi></math>, which consists of <math><mi>n</mi></math> elements.  The rule <strong>V</strong> follows is that if <math><msub><mi>C</mi><mi>i</mi></msub><mo>=</mo>0</math> then <strong>V</strong> requests that <strong>P</strong> supply <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math>. If <math><msub><mi>C</mi><mi>i</mi></msub><mo>=</mo>1</math> then <strong>V</strong> requests that <strong>P</strong> supply <math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math>. In other words, at each round, <math><mi>i</mi></math>, <strong>V</strong> randomly chooses which of the two questions to ask <strong>P</strong>.</p>
+
+<p>After sending a question to <strong>P</strong>, <strong>V</strong> records the exact time and increments <math><mi>i</mi></math> by <math><mn>1</mn></math>.</p>
+
+<p>Because cause must precede effect, <strong>P</strong> cannot provide a correct answer to <strong>V</strong> until after <strong>P</strong> receives the question. Since the speed of light is the maximum rate at which any information can travel through space, there is a minimum ping time (or "time of flight") for any given distance between <strong>V</strong> and <strong>P</strong> which can be used by the protocol to prove an upper bound to the distance between <strong>V</strong> and <strong>P</strong>.</p>
+
+<p>Immediately after receiving a question, <strong>P</strong> sends to <strong>V</strong> the value <math><msubsup><mi>R</mi><mi>i</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msubsup></math> which is the requested bit from either <math><msup><mi>R</mi><mn>0</mn></msup></math> or <math><msup><mi>R</mi><mn>1</mn></msup></math>. The set of these responses can be written as <math><msup><mi>R</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msup></math>.</p>
+
+<p>Upon receiving each response, <strong>V</strong> records the exact time in order to calculate that particular question-response round-trip time (or "ping time").</p>
+
+<h3>Example 1: how the bit sequences are used</h3>
+
+<p>To help explain how this process works below is an example that sets <math><mi>n</mi><mo>=</mo><mn>16</mn></math> and walks you through how to calculate the response bit sequence, <math><msup><mi>R</mi><mn><msub><mi>C</mi><mi>i</mi></msub></mn></msup></math>. </p>
+
+<ol>
+<li><p>Verifier <strong>V</strong> and Prover <strong>P</strong> assemble and agree upon pseudorandom bit sequences <math><msup><mi>R</mi><mn>0</mn></msup></math> and <math><msup><mi>R</mi><mn>1</mn></msup></math></p>
+
+<ul>
+<li><math>
+<msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup>
+<mo>=</mo>
+<mfenced>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+</mfenced>
+</math></li>
+<li><p><mspace linebreak='newline' /><math>
+<msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup>
+<mo>=</mo>
+<mfenced>
+<mn>1</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>1</mn>
+</mfenced>
+</math></p></li>
+</ul></li>
+<li><p>Verifier <strong>V</strong> secretly produces a pseudorandom bit sequence <math><msub><mi>C</mi><mi>i</mi></msub></math>:</p>
+
+<ul>
+<li><math>
+<msub><mi>C</mi><mi>i</mi></msub>
+<mo>=</mo>
+<mfenced>
+<mn>0</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+</mfenced>
+</math></li>
+</ul></li>
+<li><p><strong>V</strong> sends each bit of <math><msub><mi>C</mi><mi>i</mi></msub></math> , one at a time, starting from <math><mi>i</mi><mo>=</mo><mn>1</mn></math> until <math><mi>i</mi><mo>=</mo><mi>n</mi></math>. <strong>V</strong> notes the exact time when it sent each value of <math><msub><mi>C</mi><mi>i</mi></msub></math>.</p></li>
+<li><p><strong>P</strong> receives and uses each bit of <math><msub><mi>C</mi><mi>i</mi></msub></math> to determine whether to immediately send the bit <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math> or <math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> to <strong>V</strong> in response. If all bits are received and sent without error, <strong>P</strong> will eventually have sent the set <math><msup><mi>R</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msup></math>.</p></li>
+<li><p><strong>V</strong> receives and records the arrival time for each response bit, <math><msubsup><mi>R</mi><mi>i</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msubsup></math>. <strong>V</strong> calculates the round-trip time for each round. The resulting values of <math><msubsup><mi>R</mi><mi>i</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msubsup></math> are:</p>
+
+<ul>
+<li><math>
+<msubsup><mi>R</mi><mi>i</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msubsup>
+<mo>=</mo>
+<mfenced>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>0</mn>
+<mn>1</mn>
+<mn>1</mn>
+</mfenced>
+</math></li>
+</ul></li>
+</ol>
+
+<p>Below is a table illustrating how the example values for these bit sequences correlate. I have bolded the values of <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math> and <math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> which were sent by <strong>P</strong> in response to the values sent of <math><msub><mi>C</mi><mi>i</mi></msub></math> sent by <strong>V</strong>.</p>
+
+<table border="1">
+  <tr>
+    <th><math><mi>i</mi></math></th>
+    <th>01</th>
+    <th>02</th>
+    <th>03</th>
+    <th>04</th>
+    <th>05</th>
+    <th>06</th>
+    <th>07</th>
+    <th>08</th>
+    <th>09</th>
+    <th>10</th>
+    <th>11</th>
+    <th>12</th>
+    <th>13</th>
+    <th>14</th>
+    <th>15</th>
+    <th>16</th>
+  </tr>
+  <tr>
+    <td><math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math></td>
+    <td><b>0</b><br></td>
+    <td><b>1</b></td>
+    <td><b>0</b></td>
+    <td><b>0</b></td>
+    <td>1</td>
+    <td><b>0</b></td>
+    <td>1</td>
+    <td>1</td>
+    <td><b>1</b></td>
+    <td><b>0</b></td>
+    <td><b>1</b></td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td><b>1</b></td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td><math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math></td>
+    <td>1<br></td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><b>1</b></td>
+    <td>1</td>
+    <td><b>1</b></td>
+    <td><b>1</b></td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td><b>0</b></td>
+    <td><b>1</b></td>
+    <td><b>0</b></td>
+    <td>0</td>
+    <td><b>1</b></td>
+  </tr>
+  <tr>
+    <td><math><msub><mi>C</mi><mi>i</mi></msub></math></td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1<br></td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td><math><msubsup><mi>R</mi><mi>i</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msubsup></math></td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+  </tr>
+</table>
+
+<h3>Explanation, part 2: False-Acceptance Rate</h3>
+
+<p>At each step <strong>V</strong> records the round trip time required between the sending of the question and the receiving of the correct answer from <strong>P</strong>. Given enough correct answers from <strong>P</strong>, <strong>V</strong> can then use the average value of the round trip time, <math><msub><mi>t</mi><mi>m</mi></msub></math>, of correct responses in order to calculate with some statistical certainty that <strong>P</strong> is physically located within a distance, <math><mi>d</mi></math>. The distance, <math><mi>d</mi></math> can be calculated using the following two equations (pg 68, <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">Hancke 2005</a>).</p>
+
+<math display='block'>
+<mi>d</mi>
+<mo>=</mo>
+<mi>c</mi>
+<mo>⋅</mo>
+<mfrac>
+ <mrow><msub><mi>t</mi><mi>m</mi></msub><mo>−</mo><msub><mi>t</mi><mi>d</mi></msub></mrow>
+ <mn>2</mn>
+</mfrac>
+</math>
+
+<p><mspace linebreak='newline' /></p>
+
+<math display='block'>
+<msub><mi>t</mi><mi>m</mi></msub><mo>=</mo><mn>2</mn><mo>⋅</mo><msub><mi>t</mi><mi>p</mi></msub><mo>+</mo><msub><mi>t</mi><mi>d</mi></msub>
+</math>
+
+<p>In the language of the Hancke paper, variables in the two equations are defined as:</p>
+
+<blockquote>
+  <p><math><mi>c</mi></math> is the propagation speed, <math><msub><mi>t</mi><mi>p</mi></msub></math> is the one way propagation time, <math><msub><mi>t</mi><mi>m</mi></msub></math> is the measured total round-trip time, and <math><msub><mi>t</mi><mi>d</mi></msub></math> is the processing delay of the remote device.</p>
+</blockquote>
+
+<p>A conservative practice defines <math><msub><mi>t</mi><mi>d</mi></msub><mo>=</mo><mn>0</mn></math> for the processing delay variable. It is conservative because <math><sub><mi>t</mi><mi>d</mi></sub></math> is a function of the capabilities of the hardware <strong>P</strong> uses to process requests from <strong>V</strong>. If both <strong>P</strong> and <strong>V</strong> trust eachother to use specific hardware with consistent and accurate estimates for response times then <math><msub><mi>t</mi><mi>d</mi></msub></math> may be specified. However, the Hancke protocol-Kuhn does not provide a means for proving or incentivizing <strong>P</strong> to accurately measure and report its own hardware capability.</p>
+
+<p>The highest possible propagation speed, <math><mi>c</mi></math>, according to the laws of physics is the speed of light in a vacuum. According to section 2.1.1.1 of the 8th edition of the <a href="https://web.archive.org/web/20190810173159/https://www.bipm.org/utils/common/pdf/si_brochure_8_en.pdf">International System of Units</a>, a document published by the International Bureau of Weights and Measures, this speed is <math><mn>299 792 458</mn><mfrac><mi>m</mi><mi>s</mi></mfrac></math>.</p>
+
+<p>The statistical certainty that the round-trip time between <strong>P</strong> and <strong>V</strong> is less than <math><msub><mi>t</mi><mi>m</mi></msub></math> is <math><mfenced><mrow><mn>1</mn><mo>−</mo><msub><mi>p</mi><mtext>FA</mtext></msub></mrow></mfenced></math> where <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> is the "false-accept probability". The value of <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> must be a statistical estimate constrained by the possibility that prover, <strong>P</strong>, maliciously sends its best guesses before receiving the questions from <strong>V</strong>. If <strong>P</strong> dishonestly wishes to convince <strong>V</strong> that the distance is lower than it really is, then <strong>P</strong> can achieve a <math><mfrac><mn>3</mn><mn>4</mn></mfrac></math> probability of guessing correctly for a given round without having yet received that round's value of <math><msub><mi>C</mi><mi>i</mi></msub></math>. This is because, on average, half of the rounds do not require guessing at all since half the time <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math>. The other half of the time <strong>P</strong>'s best strategy, assuming <strong>V</strong> generated <math><mi>C</mi></math> securely, is to guess <math><mn>1</mn></math> or <math><mn>0</mn></math> at random.</p>
+
+<p>The false acceptance probability, or "False-Acceptance Rate", <math><msub><mi>p</mi><mtext>FA</mtext></msub></math>, of <strong>V</strong> accepting the distance-bounding protocol proof of <strong>P</strong> can be calculated using the following equation found on the sixth page of the <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">Hancke paper</a>. This equation calculates <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> assuming <strong>V</strong> judges that receiving <math><mi>k</mi></math> correct responses out of <math><mi>n</mi></math> total rounds is acceptable.</p>
+
+<math display='block'>
+<msub>
+ <mi>p</mi>
+ <mtext>FA</mtext>
+</msub>
+<mo>=</mo>
+<munderover>
+ <mo>∑</mo>
+  <mrow>
+   <mi>i</mi>
+   <mo>=</mo>
+   <mi>k</mi>
+  </mrow>
+  <mi>n</mi>
+</munderover>
+<mfenced>
+ <mfrac linethickness="0">
+  <mi>n</mi>
+  <mi>i</mi>
+ </mfrac>
+</mfenced>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>3</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mi>i</mi>
+</msup>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>1</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mrow>
+  <mi>n</mi>
+  <mo>−</mo>
+  <mi>i</mi>
+ </mrow>
+</msup>
+
+</math>
+
+<p>The equation states that <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> is equal to the sum of each individual probability where <strong>P</strong> guessed correctly <math<mi>k</mi></math> or more times (for example: one outcome exists where <strong>P</strong> guesses perfectly, some outcomes where <strong>P</strong> makes only one mistake, some outcomes where <strong>P</strong> makes two mistakes, etc.). The total number of terms in the sum is of <math><mi>n</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn></math>. </p>
+
+<p>In other words, the final term (the <math><mfenced><mi>n</mi></mfenced></math>'th term) of the sum is the probability that <strong>P</strong> guesses correctly in exactly every single response (one very rare possibility). The penultimate term (the <math><mfenced><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></mfenced></math>'th term) is the probability that <strong>P</strong> guesses correctly every single time <em>except</em> for exactly <em>one</em> mistake somewhere (a slightly less rare possibility). The <math><mfenced><mrow><mi>n</mi><mo>−</mo><mn>2</mn></mrow></mfenced></math>'th term is the probability that <strong>P</strong> guesses all responses correctly but with <em>two</em> errors somewhere. The <math><mfenced><mrow><mi>n</mi><mo>−</mo><mn>3</mn></mrow></mfenced></math>'th term is the probability that <strong>P</strong> guesses all responses correctly but with <em>three</em> errors somewhere, and so forth. The first term of the sum is the probability that <strong>P</strong> guesses correctly exactly <math><mi>k</mi></math> times out of <math><mi>n</mi></math> responses and therefore provided incorrect responses exactly <math><mfenced><mrow><mi>n</mi><mo>−</mo><mi>k</mi></mrow></mfenced></math> times. Each term of the sum is the <a href="https://en.wikibooks.org/wiki/Statistics/Distributions/Binomial">binomial probability function</a> (a.k.a. "binomial distribution formula" or "probability mass function") which should be part of the syllabus for any a typical Statistics course.</p>
+
+<p>Since no factor of the equation for <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> can be made exactly equal to zero it is impossible for Verifier <strong>V</strong> to completely eliminate the possibility that <strong>P</strong> could forge this distance-bounding proof. The best <strong>V</strong> can do to strengthen confidence in the proof's validity is to set the parameters <math><mi>k</mi></math> and <math><mi>n</mi></math> to values that produce an acceptably low value for <math><msub><mi>p</mi><mtext>FA</mtext></msub></math>, the probability of falsely accepting a maliciously constructed proof by Prover <strong>P</strong>.</p>
+
+<h3>Example 2: Calculating False-Acceptance Rate</h3>
+
+<p>Below is a copy of the previous example table but with values of <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math> and <math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> bolded when <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math>. From inspection it should be clear that <strong>P</strong> does not have to guess roughly half of the rounds since a quarter of the time <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup><mo>=</mo><mn>0</mn></math> and a quarter of the time <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup><mo>=</mo><mn>1</mn></math>.</p>
+
+<table border="1">
+  <tr>
+    <th><math><mi>i</mi></math></th>
+    <th>01</th>
+    <th>02</th>
+    <th>03</th>
+    <th>04</th>
+    <th>05</th>
+    <th>06</th>
+    <th>07</th>
+    <th>08</th>
+    <th>09</th>
+    <th>10</th>
+    <th>11</th>
+    <th>12</th>
+    <th>13</th>
+    <th>14</th>
+    <th>15</th>
+    <th>16</th>
+  </tr>
+  <tr>
+    <td><math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup></math></td>
+    <td>0<br></td>
+    <td>1</td>
+    <td><b>0</b></td>
+    <td><b>0</b></td>
+    <td><b>1</b></td>
+    <td>0</td>
+    <td><b>1</b></td>
+    <td><b>1</b></td>
+    <td>1</td>
+    <td>0</td>
+    <td><b>1</b></td>
+    <td>1</td>
+    <td>0</td>
+    <td><b>0</b></td>
+    <td>1</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td><math><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math></td>
+    <td>1<br></td>
+    <td>0</td>
+    <td><b>0</b></td>
+    <td><b>0</b></td>
+    <td><b>1</b></td>
+    <td>1</td>
+    <td><b>1</b></td>
+    <td><b>1</b></td>
+    <td>0</td>
+    <td>1</td>
+    <td><b>1</b></td>
+    <td>0</td>
+    <td>1</td>
+    <td><b>0</b></td>
+    <td>0</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td><math><msub><mi>C</mi><mi>i</mi></msub></math></td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1<br></td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td><math><msubsup><mi>R</mi><mi>i</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msubsup></math></td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+  </tr>
+</table>
+
+<p>Side note: I believe the inefficiency of allowing the protocol to have instances where <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> is due to Hancke designing the protocol to be simple in order to accomodate implementation in RFID tags with limited computatioinal ability and over noisy communication channels. The scope of this project doesn't include attempting to improve the protocol but to simply implement it as described in the Hancke paper.</p>
+
+<p>In order to illustrate how the False-Acceptance Rate, <math><msub><mi>p</mi><mtext>FA</mtext></msub></math>, is calculated, let us say that <strong>V</strong> was programmed to accept <math><mn>14</mn></math> correct responses out of <math><mn>16</mn></math> (<math><mi>k</mi><mo>=</mo><mn>14</mn></math>, <math><mi>n</mi><mo>=</mo><mn>16</mn></math>). In this case <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> could be calculated as described below.</p>
+
+<p>The binomial coefficient factor in the <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> equation can be expanded out, with <math><mo>!</mo></math> signifying the factorial operation (for example, <math><mn>5</mn><mo>!</mo><mo>=</mo><mn>5</mn><mo>⋅</mo><mn>4</mn><mo>⋅</mo><mn>3</mn><mo>⋅</mo><mn>2</mn><mo>⋅</mo><mn>1</mn><mo>=</mo><mn>120</mn></math>).</p>
+
+<math display='block'>
+<msub>
+ <mi>p</mi>
+ <mtext>FA</mtext>
+</msub>
+<mo>=</mo>
+<munderover>
+ <mo>∑</mo>
+  <mrow>
+   <mi>i</mi>
+   <mo>=</mo>
+   <mi>k</mi>
+  </mrow>
+  <mi>n</mi>
+</munderover>
+<mfenced>
+ <mfrac>
+  <mrow>
+   <mi>n</mi>
+   <mo>!</mo>
+  </mrow>
+  <mrow>
+   <mi>i</mi>
+   <mo>!</mo>
+   <mfenced>
+    <mrow>
+     <mi>n</mi>
+     <mo>−</mo>
+     <mi>i</mi>
+    </mrow>
+   </mfenced>
+   <mo>!</mo>
+  </mrow>
+ </mfrac>
+</mfenced>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>3</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mi>i</mi>
+</msup>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>1</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mrow>
+  <mi>n</mi>
+  <mo>−</mo>
+  <mi>i</mi>
+ </mrow>
+</msup>
+</math>
+
+<p>The sum consists consist of a total of <math><mi>n</mi><mo>−</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo>=</mo><mn>16</mn><mo>−</mo><mn>14</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>3</mn></math> terms.</p>
+
+<p>The last term (<math><mi>i</mi><mo>=</mo><mi>n</mi><mo>=</mo><mn>16</mn></math>) is:</p>
+
+<math display='block'>
+<mfenced>
+ <mfrac>
+  <mrow>
+   <mn>16</mn>
+   <mo>!</mo>
+  </mrow>
+  <mrow>
+   <mn>16</mn>
+   <mo>!</mo>
+   <mfenced>
+    <mrow>
+     <mn>16</mn>
+     <mo>−</mo>
+     <mn>16</mn>
+    </mrow>
+   </mfenced>
+   <mo>!</mo>
+  </mrow>
+ </mfrac>
+</mfenced>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>3</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mn>16</mn>
+</msup>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>1</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mrow>
+  <mn>16</mn>
+  <mo>−</mo>
+  <mn>16</mn>
+ </mrow>
+</msup>
+<mo>=</mo>
+<mn>1.00226</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-2</mn>
+</msup>
+</math>
+
+<p>The penultimate term (<math><mi>i</mi><mo>=</mo><mn>15</mn></math>) is:</p>
+
+<math display='block'>
+
+<mfenced>
+ <mfrac>
+  <mrow>
+   <mn>16</mn>
+   <mo>!</mo>
+  </mrow>
+  <mrow>
+   <mn>15</mn>
+   <mo>!</mo>
+   <mfenced>
+    <mrow>
+     <mn>16</mn>
+     <mo>−</mo>
+     <mn>15</mn>
+    </mrow>
+   </mfenced>
+   <mo>!</mo>
+  </mrow>
+ </mfrac>
+</mfenced>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>3</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mn>15</mn>
+</msup>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>1</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mrow>
+  <mn>16</mn>
+  <mo>−</mo>
+  <mn>15</mn>
+ </mrow>
+</msup>
+
+<mo>=</mo>
+<mn>5.34538</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-2</mn>
+</msup>
+
+</math>
+
+<p>The first term (<math><mi>i</mi><mo>=</mo><mi>k</mi><mo>=</mo><mn>14</mn></math>) is:</p>
+
+<math display='block'>
+
+<mfenced>
+ <mfrac>
+  <mrow>
+   <mn>16</mn>
+   <mo>!</mo>
+  </mrow>
+  <mrow>
+   <mn>14</mn>
+   <mo>!</mo>
+   <mfenced>
+    <mrow>
+     <mn>16</mn>
+     <mo>−</mo>
+     <mn>14</mn>
+    </mrow>
+   </mfenced>
+   <mo>!</mo>
+  </mrow>
+ </mfrac>
+</mfenced>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>3</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mn>14</mn>
+</msup>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>1</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mrow>
+  <mn>16</mn>
+  <mo>−</mo>
+  <mn>14</mn>
+ </mrow>
+</msup>
+
+<mo>=</mo>
+<mn>1.33635</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-1</mn>
+</msup>
+
+</math>
+
+<p>The sum of these three terms is:</p>
+
+<math display='block'>
+
+<mn>1.00226</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-2</mn>
+</msup>
+
+<mo>+</mo>
+
+<mn>5.34538</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-2</mn>
+</msup>
+
+<mo>+</mo>
+
+<mn>1.33635</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-1</mn>
+</msup>
+
+<mo>=</mo>
+<mn>1.97111</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-1</mn>
+</msup>
+
+</math>
+
+<p>Therefore, the False-Acceptance Rate, <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> can be written as:</p>
+
+<math display='block'>
+<msub>
+ <mi>p</mi>
+ <mtext>FA</mtext>
+</msub>
+<mo>=</mo>
+<munderover>
+ <mo>∑</mo>
+  <mrow>
+   <mi>i</mi>
+   <mo>=</mo>
+   <mi>k</mi>
+   <mo>=</mo>
+   <mi>14</mi>
+  </mrow>
+  <mrow>
+   <mi>n</mo>
+   <mo>=</mo>
+   <mi>16</mi>
+  </mrow>
+</munderover>
+<mfenced>
+ <mfrac>
+  <mrow>
+   <mi>n</mi>
+   <mo>!</mo>
+  </mrow>
+  <mrow>
+   <mi>i</mi>
+   <mo>!</mo>
+   <mfenced>
+    <mrow>
+     <mi>n</mi>
+     <mo>−</mo>
+     <mi>i</mi>
+    </mrow>
+   </mfenced>
+   <mo>!</mo>
+  </mrow>
+ </mfrac>
+</mfenced>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>3</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mi>i</mi>
+</msup>
+<mo>⋅</mo>
+<msup>
+ <mfenced>
+  <mfrac>
+   <mn>1</mn>
+   <mn>4</mn>
+  </mfrac>
+ </mfenced>
+ <mrow>
+  <mi>n</mi>
+  <mo>−</mo>
+  <mi>i</mi>
+ </mrow>
+</msup>
+
+<mo>=</mo>
+<mn>1.97111</mn>
+<mo>⋅</mo>
+<msup>
+ <mn>10</mn>
+ <mn>-1</mn>
+</msup>
+
+<mo>=</mo>
+<mn>19.7111</mn>
+<mo>%</mo>
+
+</math>
+
+<p>In other words, if <strong>V</strong> decides to accept only <math><mi>k</mi><mo>=</mo><mn>14</mn></math> or more correct bits from from <strong>P</strong> out of a possible <math><mi>n</mi><mo>=</mo><mn>16</mn></math> bits in the bit sequences they exchange, then there is about a <math><mn>19.7</mn><mo>%</mo></math> chance that <strong>P</strong> could fool <strong>V</strong> into accepting that the distance between them was lower than it physically is. <strong>P</strong> could do this by completely disregarding <strong>V</strong>'s questions, <math><mi>C</mi></math>, and sending only best guesses for bit sequence <math><msup><mi>R</mi><mi><msub><mi>C</mi><mi>i</mi></msub></mi></msup></math> given the structure of <math><msup><mi>R</mi><mn>0</mn></msup></math> and <math><msup><mi>R</mi><mn>1</mn></msup></math>.</p>

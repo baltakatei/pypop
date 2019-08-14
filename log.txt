@@ -26,3 +26,13 @@ describing the Hancke-Kuhn protocol in my own terms. Equations are
 encoded in MathML (viewable in default Firefox).
 
 :: :: :: ::
+
+2019-08-14T00:35Z; baltakatei>
+
+`github.com` MathML support in their Markdown renderer does not function
+correctly. Excising "Background section" from `readme.md` and moving
+content into `background.md` in `DOCS/` directory and generating
+`background.html` using Markdown 1.0.1 ("Copyright 2004 John Gruber").
+
+:: :: :: ::
+
