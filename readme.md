@@ -13,7 +13,7 @@ Create a `python3` script that enables a user to calculate the an upper bound of
 
 It is possible using round-trip time (ping time) between a Verifier and a Prover and the assumption that nothing can travel faster than the speed of light in order to calculate an upper bound for distance between the Verifier and Prover.
 
-Such a distance-bounding method is described in the [Hancke-Kuhn Protocol][hancke_2005_dbp]. See [background.html](DOCS/background.html) for a more detailed summary of this protocol.
+Such a distance-bounding method is described in the [Hancke-Kuhn Protocol][hancke_2005_dbp]. See this [explanation of this protocol](http://reboil.com/blog/0020190814T004315Z..hancke-kuhn_dbp.html).
 
 
 ## Method
