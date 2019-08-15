@@ -48,6 +48,18 @@ Updated `/DOCS/background.md`.
 
 2019-08-15T20:19:51Z; baltakatei>
 
-Changed GitLab project name from `pypop` to `bkpop` given the future need to implement proof of ping protocol in languages faster than python.
+Changed GitLab project name from `pypop` to `bkpop` given the future
+need to implement proof of ping protocol in languages faster than
+python.
+
+:: :: :: ::
+
+2019-08-15T21:52:37Z; baltakatei>
+
+Moved `pypop-v.py` to `verify.py` and `pypop-p.py` to `prove.py`.
+
+Updated `local_benchmark.py` and renamed it to
+`benchmark_local.py`. The `time.monotonic_ns()` function appears to
+provide the highest temporal resolution.
 
 :: :: :: ::
