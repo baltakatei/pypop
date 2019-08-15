@@ -1,6 +1,9 @@
 # The purpose of this script is to benchmark the resolution of local
 # time measurement.
 
+# Specific Python `time` functions selected from https://docs.python.org/3/library/time.html.
+
+
 import time
 
 # Set constants
