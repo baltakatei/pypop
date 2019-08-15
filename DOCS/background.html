@@ -3,13 +3,13 @@
 
 <h1>Explanation of the Hancke-Kuhn Distance-Bounding Protocol</h1>
 
-<p>Created by <a href="https://twitter.com/baltakatei">Steven Baltakatei Sandoval</a> on 2019-08-15T06:46:35Z under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> license and last updated on 2019-08-15T09:30:12Z.</p>
+<p>Created by <a href="https://twitter.com/baltakatei">Steven Baltakatei Sandoval</a> on 2019-08-15T06:46:35Z under a <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> license and last updated on 2019-08-15T20:16:52Z.</p>
 
 <h2>Introduction</h2>
 
 <p>It is possible to determine how far two computers are from eachother using the speed of light and ping time. The physical distance is, at most, the ping time multiplied by the speed of light. This documents explains the <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">Hancke-Kuhn protocol</a> that can calculate this upper bound for the distance between a Verifier <strong>V</strong> and a Prover <strong>P</strong> through the sending and receiving of certain bit sequences. This calculation is useful for location-based authentication technology (ex: RFID, contactless payment) defending against man-in-the middle attacks.</p>
 
-<p>I have written this explanation in order to help solidify my own understanding of the protocol before I write my own implementation of it at my <a href="https://gitlab.com/baltakatei/pypop">GitLab repository</a>. It is an explanation in my own words. Any errors or misrepresentations are entirely my own.</p>
+<p>I have written this explanation in order to help solidify my own understanding of the protocol before I write my own implementation of it at my <a href="https://gitlab.com/baltakatei/bkpop">GitLab repository</a>. It is an explanation in my own words. Any errors or misrepresentations are entirely my own.</p>
 
 <p>A more detailed summary with references to academic papers was published by Cristina Onete which may be found <a href="http://onete.net/papers/DistBound.pdf">here</a> on her website's <a href="https://www.onete.net/publications.html">publication page</a>.</p>
 
@@ -497,7 +497,7 @@
   </tr>
 </table>
 
-<p>Side note: I believe the inefficiency of allowing the protocol to have instances where <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> is due to Hancke designing the protocol to be simple in order to accomodate implementation in RFID tags with limited computatioinal ability and over noisy communication channels. The scope of my <a href="https://gitlab.com/baltakatei/pypop">Proof of Ping project</a> doesn't include attempting to improve the protocol but to simply implement it as described in the Hancke paper.</p>
+<p>Side note: I believe the inefficiency of allowing the protocol to have instances where <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> is due to Hancke designing the protocol to be simple in order to accomodate implementation in RFID tags with limited computatioinal ability and over noisy communication channels. The scope of my [Proof of Ping project][glbk<em>2019</em>pypop] doesn't include attempting to improve the protocol but to simply implement it as described in the Hancke paper.</p>
 
 <p>In order to illustrate how the False-Acceptance Rate, <math><msub><mi>p</mi><mtext>FA</mtext></msub></math>, is calculated, let us say that <strong>V</strong> was programmed to accept <math><mn>14</mn></math> correct responses out of <math><mn>16</mn></math> (<math><mi>k</mi><mo>=</mo><mn>14</mn></math>, <math><mi>n</mi><mo>=</mo><mn>16</mn></math>). For this case the calculation of <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> is detailed in <a href="http://reboil.com/calc/0020190815T091844Z..false_accept_probability_calc_table.ods">this spreadsheet file</a> (in <a href="https://en.wikipedia.org/wiki/OpenDocument">ODS format</a>) as well directly below.</p>
 

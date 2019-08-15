@@ -45,3 +45,9 @@ site.
 Updated `/DOCS/background.md`.
 
 :: :: :: ::
+
+2019-08-15T20:19:51Z; baltakatei>
+
+Changed GitLab project name from `pypop` to `bkpop` given the future need to implement proof of ping protocol in languages faster than python.
+
+:: :: :: ::

@@ -3,13 +3,13 @@
 
 # Explanation of the Hancke-Kuhn Distance-Bounding Protocol
 
-Created by [Steven Baltakatei Sandoval](https://twitter.com/baltakatei) on 2019-08-15T06:46:35Z under a [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license and last updated on 2019-08-15T09:30:12Z.
+Created by [Steven Baltakatei Sandoval](https://twitter.com/baltakatei) on 2019-08-15T06:46:35Z under a [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license and last updated on 2019-08-15T20:16:52Z.
 
 ## Introduction
 
 It is possible to determine how far two computers are from eachother using the speed of light and ping time. The physical distance is, at most, the ping time multiplied by the speed of light. This documents explains the [Hancke-Kuhn protocol][hancke_2005_dbp] that can calculate this upper bound for the distance between a Verifier **V** and a Prover **P** through the sending and receiving of certain bit sequences. This calculation is useful for location-based authentication technology (ex: RFID, contactless payment) defending against man-in-the middle attacks.
 
-I have written this explanation in order to help solidify my own understanding of the protocol before I write my own implementation of it at my [GitLab repository][glbk_2019_pypop]. It is an explanation in my own words. Any errors or misrepresentations are entirely my own.
+I have written this explanation in order to help solidify my own understanding of the protocol before I write my own implementation of it at my [GitLab repository][glbk_2019_bkpop]. It is an explanation in my own words. Any errors or misrepresentations are entirely my own.
 
 A more detailed summary with references to academic papers was published by Cristina Onete which may be found [here][onete_2012_summary] on her website's [publication page][onete_2019_publications].
 
@@ -873,7 +873,7 @@ In other words, if **V** decides to accept only <math><mi>k</mi><mo>=</mo><mn>14
 
 [onete_2012_summary]: http://onete.net/papers/DistBound.pdf
 
-[glbk_2019_pypop]: https://gitlab.com/baltakatei/pypop
+[glbk_2019_bkpop]: https://gitlab.com/baltakatei/bkpop
 
 [onete_2019_publications]: https://www.onete.net/publications.html
 
