@@ -1,19 +1,23 @@
 <p><!DOCTYPE html>
 <meta charset="utf-8"></p>
 
+<h1>Explanation of the Hancke-Kuhn Distance-Bounding Protocol</h1>
+
 <h2>Introduction</h2>
 
-<p>This is an explanation of how a distance-bounding protocol can be performed using the sending of bit sequences between Verifier <strong>V</strong> to Prover <strong>P</strong>.</p>
+<p>It is possible to determine how far two computers are from eachother using the speed of light and ping time. The physical distance is, at most, the ping time multiplied by the speed of light. This documents explains the <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">Hancke-Kuhn protocol</a> that can calculate this upper bound for the distance between a Verifier <strong>V</strong> and a Prover <strong>P</strong> through the sending and receiving of certain bit sequences. This calculation is useful for defending against man-in-the middle attacks.</p>
 
-<p><a href="http://danielscully.co.uk/projects/mathml-guide/browsertest.php">MathML</a> browser support is required. <a href="https://www.mozilla.org/en-US/firefox/60.0esr/releasenotes/">Firefox 60.0 esr</a> should render MathML symbols correctly.</p>
+<p>I have written this explanation in order to help solidify my own understanding of the protocol before I write my own implementation of it at my <a href="https://gitlab.com/baltakatei/pypop">GitLab repository</a>. It is an explanation in my own words. Any errors or misrepresentations are entirely my own.</p>
+
+<p>A more detailed summary with references to academic papers was published by Cristina Onete which may be found <a href="http://onete.net/papers/DistBound.pdf">here</a> on her website's <a href="https://www.onete.net/publications.html">publication page</a>.</p>
+
+<p>This document makes use of <a href="http://danielscully.co.uk/projects/mathml-guide/browsertest.php">MathML</a> for displaying equations. <a href="https://www.mozilla.org/en-US/firefox/60.0esr/releasenotes/">Firefox 60.0 esr</a> should render MathML symbols correctly.</p>
 
 <h2>Background</h2>
 
 <h3>Explanation, part 1: setup</h3>
 
-<p>I will attempt to explain my understanding of the <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">Hancke-Khun distance-bounding protocol</a> in my own words for a layman reader. If there are errors or misrepresentations then I am at fault.</p>
-
-<p>Gerhard P. Hancke and Markus G. Kuhn <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">proposed</a> a distance-bounding protocol as a defense against man-in-the-middle attacks for people who use RFID tokens in order to automatically authenticate themselves for a location-based service such as the opening of a door or purchase at a specific point-of-sale device.</p>
+<p>In 2005, Gerhard P. Hancke and Markus G. Kuhn <a href="https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf">proposed</a> a distance-bounding protocol as a defense against man-in-the-middle attacks for people who use RFID tokens in order to automatically authenticate themselves for a location-based service such as the opening of a door or purchase at a specific point-of-sale device.</p>
 
 <p>An example of a man-in-the-middle attack for such a building access-control could be two attackers maliciously forwarding radio traffic between an RFID token and a building RFID reader without the RFID token owner's knowledge even in the case where the token is located at a great distance from the reader. The idea to strengthen an RFID token against such an attack is to equip the building RFID reader with some means of proving the token is physically located within a specific distance.</p>
 

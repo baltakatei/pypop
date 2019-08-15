@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 
+# Explanation of the Hancke-Kuhn Distance-Bounding Protocol
+
 ## Introduction
 
-This is an explanation of how a distance-bounding protocol can be performed using the sending of bit sequences between Verifier **V** to Prover **P**.
+It is possible to determine how far two computers are from eachother using the speed of light and ping time. The physical distance is, at most, the ping time multiplied by the speed of light. This documents explains the [Hancke-Kuhn protocol][hancke_2005_dbp] that can calculate this upper bound for the distance between a Verifier **V** and a Prover **P** through the sending and receiving of certain bit sequences. This calculation is useful for defending against man-in-the middle attacks.
 
-[MathML][dis_2019_mathml] browser support is required. [Firefox 60.0 esr][ff_2018_60esr] should render MathML symbols correctly.
+I have written this explanation in order to help solidify my own understanding of the protocol before I write my own implementation of it at my [GitLab repository][glbk_2019_pypop]. It is an explanation in my own words. Any errors or misrepresentations are entirely my own.
+
+A more detailed summary with references to academic papers was published by Cristina Onete which may be found [here][onete_2012_summary] on her website's [publication page][onete_2019_publications].
+
+This document makes use of [MathML][dis_2019_mathml] for displaying equations. [Firefox 60.0 esr][ff_2018_60esr] should render MathML symbols correctly.
 
 ## Background
 
 ### Explanation, part 1: setup
 
-I will attempt to explain my understanding of the [Hancke-Khun distance-bounding protocol][hancke_2005_dbp] in my own words for a layman reader. If there are errors or misrepresentations then I am at fault.
-
-Gerhard P. Hancke and Markus G. Kuhn [proposed][hancke_2005_dbp] a distance-bounding protocol as a defense against man-in-the-middle attacks for people who use RFID tokens in order to automatically authenticate themselves for a location-based service such as the opening of a door or purchase at a specific point-of-sale device.
+In 2005, Gerhard P. Hancke and Markus G. Kuhn [proposed][hancke_2005_dbp] a distance-bounding protocol as a defense against man-in-the-middle attacks for people who use RFID tokens in order to automatically authenticate themselves for a location-based service such as the opening of a door or purchase at a specific point-of-sale device.
 
 An example of a man-in-the-middle attack for such a building access-control could be two attackers maliciously forwarding radio traffic between an RFID token and a building RFID reader without the RFID token owner's knowledge even in the case where the token is located at a great distance from the reader. The idea to strengthen an RFID token against such an attack is to equip the building RFID reader with some means of proving the token is physically located within a specific distance.
 
@@ -864,3 +868,9 @@ In other words, if **V** decides to accept only <math><mi>k</mi><mo>=</mo><mn>14
 [dis_2019_mathml]: http://danielscully.co.uk/projects/mathml-guide/browsertest.php
 
 [ff_2018_60esr]: https://www.mozilla.org/en-US/firefox/60.0esr/releasenotes/
+
+[onete_2012_summary]: http://onete.net/papers/DistBound.pdf
+
+[glbk_2019_pypop]: https://gitlab.com/baltakatei/pypop
+
+[onete_2019_publications]: https://www.onete.net/publications.html
