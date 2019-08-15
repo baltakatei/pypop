@@ -23,6 +23,13 @@ Such a distance-bounding method is described in the [Hancke-Kuhn Protocol][hanck
 This project will implement the [Hancke-Khun distance-bounding protocol][hancke_2005_dbp] in `python3`.
 
 
+## Status
+
+- 2019-08-14: Created background explanation of Hancke-Kuhn protocol.
+
+- 2019-08-15: Created benchmark script `benchmark_local`. Uses `time` functions available to Debian 10.
+
+
 ## References
 
 * Reference 1. ["An RFID Distance Bounding Protocol" by Gerard P. Hancke and Markus G. Kuhn, 2005, IEEE][hancke_2005_dbp]
