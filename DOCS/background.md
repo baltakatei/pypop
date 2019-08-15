@@ -3,9 +3,11 @@
 
 # Explanation of the Hancke-Kuhn Distance-Bounding Protocol
 
+Created by [Steven Baltakatei Sandoval](https://twitter.com/baltakatei) on 2019-08-15T06:46:35Z under a [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/) license and last updated on 2019-08-15T09:30:12Z.
+
 ## Introduction
 
-It is possible to determine how far two computers are from eachother using the speed of light and ping time. The physical distance is, at most, the ping time multiplied by the speed of light. This documents explains the [Hancke-Kuhn protocol][hancke_2005_dbp] that can calculate this upper bound for the distance between a Verifier **V** and a Prover **P** through the sending and receiving of certain bit sequences. This calculation is useful for defending against man-in-the middle attacks.
+It is possible to determine how far two computers are from eachother using the speed of light and ping time. The physical distance is, at most, the ping time multiplied by the speed of light. This documents explains the [Hancke-Kuhn protocol][hancke_2005_dbp] that can calculate this upper bound for the distance between a Verifier **V** and a Prover **P** through the sending and receiving of certain bit sequences. This calculation is useful for location-based authentication technology (ex: RFID, contactless payment) defending against man-in-the middle attacks.
 
 I have written this explanation in order to help solidify my own understanding of the protocol before I write my own implementation of it at my [GitLab repository][glbk_2019_pypop]. It is an explanation in my own words. Any errors or misrepresentations are entirely my own.
 
@@ -325,7 +327,7 @@ In the language of the Hancke paper, variables in the two equations are defined 
 
 > <math><mi>c</mi></math> is the propagation speed, <math><msub><mi>t</mi><mi>p</mi></msub></math> is the one way propagation time, <math><msub><mi>t</mi><mi>m</mi></msub></math> is the measured total round-trip time, and <math><msub><mi>t</mi><mi>d</mi></msub></math> is the processing delay of the remote device.
 
-A conservative practice defines <math><msub><mi>t</mi><mi>d</mi></msub><mo>=</mo><mn>0</mn></math> for the processing delay variable. It is conservative because <math><sub><mi>t</mi><mi>d</mi></sub></math> is a function of the capabilities of the hardware **P** uses to process requests from **V**. If both **P** and **V** trust eachother to use specific hardware with consistent and accurate estimates for response times then <math><msub><mi>t</mi><mi>d</mi></msub></math> may be specified. However, the Hancke protocol-Kuhn does not provide a means for proving or incentivizing **P** to accurately measure and report its own hardware capability.
+A conservative practice defines <math><msub><mi>t</mi><mi>d</mi></msub><mo>=</mo><mn>0</mn></math> for the processing delay variable. It is conservative because <math><msub><mi>t</mi><mi>d</mi></msub></math> is a function of the capabilities of the hardware **P** uses to process requests from **V**. If both **P** and **V** trust eachother to use specific hardware with consistent and accurate estimates for response times then <math><msub><mi>t</mi><mi>d</mi></msub></math> may be specified. However, the Hancke protocol-Kuhn does not provide a means for proving or incentivizing **P** to accurately measure and report its own hardware capability.
 
 The highest possible propagation speed, <math><mi>c</mi></math>, according to the laws of physics is the speed of light in a vacuum. According to section 2.1.1.1 of the 8th edition of the [International System of Units][bipm_2006_si], a document published by the International Bureau of Weights and Measures, this speed is <math><mn>299 792 458</mn><mfrac><mi>m</mi><mi>s</mi></mfrac></math>.
 
@@ -489,9 +491,9 @@ Below is a copy of the previous example table but with values of <math><msubsup>
   </tr>
 </table>
 
-Side note: I believe the inefficiency of allowing the protocol to have instances where <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> is due to Hancke designing the protocol to be simple in order to accomodate implementation in RFID tags with limited computatioinal ability and over noisy communication channels. The scope of this project doesn't include attempting to improve the protocol but to simply implement it as described in the Hancke paper.
+Side note: I believe the inefficiency of allowing the protocol to have instances where <math><msubsup><mi>R</mi><mi>i</mi><mn>0</mn></msubsup><mo>=</mo><msubsup><mi>R</mi><mi>i</mi><mn>1</mn></msubsup></math> is due to Hancke designing the protocol to be simple in order to accomodate implementation in RFID tags with limited computatioinal ability and over noisy communication channels. The scope of my [Proof of Ping project][glbk_2019_pypop] doesn't include attempting to improve the protocol but to simply implement it as described in the Hancke paper.
 
-In order to illustrate how the False-Acceptance Rate, <math><msub><mi>p</mi><mtext>FA</mtext></msub></math>, is calculated, let us say that **V** was programmed to accept <math><mn>14</mn></math> correct responses out of <math><mn>16</mn></math> (<math><mi>k</mi><mo>=</mo><mn>14</mn></math>, <math><mi>n</mi><mo>=</mo><mn>16</mn></math>). In this case <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> could be calculated as described below.
+In order to illustrate how the False-Acceptance Rate, <math><msub><mi>p</mi><mtext>FA</mtext></msub></math>, is calculated, let us say that **V** was programmed to accept <math><mn>14</mn></math> correct responses out of <math><mn>16</mn></math> (<math><mi>k</mi><mo>=</mo><mn>14</mn></math>, <math><mi>n</mi><mo>=</mo><mn>16</mn></math>). For this case the calculation of <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> is detailed in [this spreadsheet file][bk_20190815_pfacalc] (in [ODS format][wp_2019_opendocument]) as well directly below.
 
 The binomial coefficient factor in the <math><msub><mi>p</mi><mtext>FA</mtext></msub></math> equation can be expanded out, with <math><mo>!</mo></math> signifying the factorial operation (for example, <math><mn>5</mn><mo>!</mo><mo>=</mo><mn>5</mn><mo>⋅</mo><mn>4</mn><mo>⋅</mo><mn>3</mn><mo>⋅</mo><mn>2</mn><mo>⋅</mo><mn>1</mn><mo>=</mo><mn>120</mn></math>).
 
@@ -874,3 +876,10 @@ In other words, if **V** decides to accept only <math><mi>k</mi><mo>=</mo><mn>14
 [glbk_2019_pypop]: https://gitlab.com/baltakatei/pypop
 
 [onete_2019_publications]: https://www.onete.net/publications.html
+
+[bk_20190815_pfacalc]: http://reboil.com/calc/0020190815T091844Z..false_accept_probability_calc_table.ods
+
+[wp_2019_opendocument]: https://en.wikipedia.org/wiki/OpenDocument
+
+<hr>
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="🅭🅯🄯4.0" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
