@@ -27,7 +27,7 @@ This project will implement the [Hancke-Khun distance-bounding protocol][hancke_
 
 * Reference 1. ["An RFID Distance Bounding Protocol" by Gerard P. Hancke and Markus G. Kuhn, 2005, IEEE][hancke_2005_dbp]
 
-* Reference 2. Sending and receiving UDP packets in python ([link][eforbes_20170415_udppython])
+* Reference 2. Sending and receiving UDP packets in python ([link][pythontic_2019_udppython])
 
 * Reference 3. Wikipedia article on distance-bounding protocol ([link][wp_2019_dbp])
 
@@ -35,6 +35,8 @@ This project will implement the [Hancke-Khun distance-bounding protocol][hancke_
 [hancke_2005_dbp]: https://web.archive.org/web/20170810181543/http://www.cl.cam.ac.uk/~mgk25/sc2005-distance.pdf
 
 [eforbes_20170415_udppython]: https://tutorialedge.net/python/udp-client-server-python/
+
+[pythontic_2019_udppython]: https://pythontic.com/modules/socket/udp-client-server-example
 
 [wp_2019_dbp]: https://en.wikipedia.org/wiki/Distance-bounding_protocol
 
